@@ -4,7 +4,7 @@ from flask import Flask, request, redirect, url_for, flash, render_template
 from werkzeug.utils import secure_filename
 
 # UPLOAD_FOLDER = os.path.dirname(os.path.realpath(__file__))
-UPLOAD_FOLDER = "./static/input-files/"
+UPLOAD_FOLDER = "./data/input-files/"
 ALLOWED_EXTENSIONS = set(['zip'])
 
 app = Flask(__name__)
