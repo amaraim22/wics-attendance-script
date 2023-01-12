@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="Mark Otto, Jacob Thornton, and Bootstrap contributors">
+    <meta name="generator" content="Hugo 0.104.2">
+    <title>Signin Template · Bootstrap v5.2</title>
+
+    <link rel="canonical" href="https://getbootstrap.com/docs/5.2/examples/sign-in/">
+    <link href="{{ url_for('static', filename='assets/dist/css/bootstrap.min.css') }}" rel="stylesheet">
+
+    
+    <!-- Custom styles for this template -->
+    <link href="{{ url_for('static', filename='stylesheets/signin.css') }}" type="text/css" rel="stylesheet">
+  </head>
+  <body class="text-center">  
+    <main class="w-100 m-auto">
+      <div class="container">
+      <div class="row">
+        <div class="col-lg-5">
+          <form method="POST" action="" enctype="multipart/form-data">
+            <img class="mb-4" src="{{ url_for('static', filename='assets/brand/bootstrap-logo.svg') }}" alt="" width="72" height="57">
+            <h1 class="h3 mb-3 fw-normal">Upload Files</h1>
+            <div class="input-group mb-3">
+              <input type="file" name="file" class="form-control">
+            </div>
+            <input type="submit" class="btn btn-primary" value="Upload">
+          </form>
+        </div>
+        <div class="col-lg-7">
+          <h1 class="h3 mb-3 fw-normal">Select Files</h1>
+          <div class="container">
+            {% if inputFiles %}
+            <div class="input-group">
+              <input class="form-check-input m-1" type="checkbox" id="select_all_checkboxes" />
+              <label for="select_all_checkboxes">Select All</label>
+            </div>
+            <ul class="list-group">
+              {% for inputFile in inputFiles %}    
+              <li class="list-group-item rounded-0 text-start">  
+                <input class="form-check-input m-1" type="checkbox" name=checkedFiles value={inputFile}>
+                <span>{{ inputFile }}</span>   
+              </li>                
+              {% endfor %}
+            </ul>
+            {% endif %}
+          </div> 
+        </div>
+      </div>
+      </div>
+    </main>
+  </body>
+</html>
