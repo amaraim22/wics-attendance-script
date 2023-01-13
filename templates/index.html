@@ -11,40 +11,75 @@
     <link rel="canonical" href="https://getbootstrap.com/docs/5.2/examples/sign-in/">
     <link href="{{ url_for('static', filename='assets/dist/css/bootstrap.min.css') }}" rel="stylesheet">
 
-    
     <!-- Custom styles for this template -->
     <link href="{{ url_for('static', filename='stylesheets/signin.css') }}" type="text/css" rel="stylesheet">
+
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript"></script>
+
+    <script type="text/javascript">  
+      function selects(){  
+        var ele=document.getElementsByName('checkedFiles');  
+        for(var i=0; i<ele.length; i++){  
+          if(ele[i].type=='checkbox')  
+            ele[i].checked=true;  
+        }  
+      }  
+      function deSelect(){  
+        var ele=document.getElementsByName('checkedFiles');  
+        for(var i=0; i<ele.length; i++){  
+          if(ele[i].type=='checkbox')  
+            ele[i].checked=false;  
+        }  
+      }     
+      
+      $(document).ready(function () {
+            $("#download").click(function (e) {
+                e.preventDefault();                 
+                window.location.href = "output.xlsx";
+            });
+        });
+    </script>  
   </head>
   <body class="text-center">  
     <main class="w-100 m-auto">
       <div class="container">
       <div class="row">
         <div class="col-lg-5">
-          <form method="POST" action="" enctype="multipart/form-data">
+          <form method="POST" action="/uploadZipfile" enctype="multipart/form-data">
             <img class="mb-4" src="{{ url_for('static', filename='assets/brand/bootstrap-logo.svg') }}" alt="" width="72" height="57">
             <h1 class="h3 mb-3 fw-normal">Upload Files</h1>
+            <h6>['Email', 'First Name', 'Last Name', 'Year']</h3>
             <div class="input-group mb-3">
-              <input type="file" name="file" class="form-control">
+              <input type="file" name="zipfile" class="form-control">
             </div>
             <input type="submit" class="btn btn-primary" value="Upload">
           </form>
+          <div class="container">
+            {% if outputFile %}
+          
+              <input class="btn btn-primary m-3" id="download" type="submit" value="Download Output File"/>  
+              {{ outputFile }}  
+
+            {% endif %}
+          </div> 
         </div>
         <div class="col-lg-7">
           <h1 class="h3 mb-3 fw-normal">Select Files</h1>
           <div class="container">
             {% if inputFiles %}
-            <div class="input-group">
-              <input class="form-check-input m-1" type="checkbox" id="select_all_checkboxes" />
-              <label for="select_all_checkboxes">Select All</label>
-            </div>
-            <ul class="list-group">
-              {% for inputFile in inputFiles %}    
-              <li class="list-group-item rounded-0 text-start">  
-                <input class="form-check-input m-1" type="checkbox" name=checkedFiles value={inputFile}>
-                <span>{{ inputFile }}</span>   
-              </li>                
-              {% endfor %}
-            </ul>
+            <form method="POST" action="/checkedFiles" enctype="multipart/form-data">
+              <input class="btn btn-primary m-3" type="button" onclick='selects()' value="Select All"/>  
+              <input class="btn btn-primary m-3" type="button" onclick='deSelect()' value="Deselect All"/>  
+              <ul class="list-group">
+                {% for inputFile in inputFiles %}    
+                <li class="list-group-item rounded-0 text-start">  
+                  <input class="form-check-input m-1" type="checkbox" name=checkedFiles value="{{ inputFile }}">
+                  <span>{{ inputFile }}</span>   
+                </li>                
+                {% endfor %}
+              </ul>
+              <input type="submit" class="btn btn-primary mt-3" value="Submit">
+            </form>
             {% endif %}
           </div> 
         </div>
