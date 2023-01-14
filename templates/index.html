@@ -6,14 +6,13 @@
     <meta name="description" content="">
     <meta name="author" content="Mark Otto, Jacob Thornton, and Bootstrap contributors">
     <meta name="generator" content="Hugo 0.104.2">
-    <title>Signin Template · Bootstrap v5.2</title>
+    <title>SBU WiCS</title>
 
     <link rel="canonical" href="https://getbootstrap.com/docs/5.2/examples/sign-in/">
     <link href="{{ url_for('static', filename='assets/dist/css/bootstrap.min.css') }}" rel="stylesheet">
 
     <!-- Custom styles for this template -->
     <link href="{{ url_for('static', filename='stylesheets/signin.css') }}" type="text/css" rel="stylesheet">
-
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript"></script>
 
     <script type="text/javascript">  
@@ -39,10 +38,12 @@
       <div class="row">
         <div class="col-lg-5">
           <form method="POST" action="/uploadZipfile" enctype="multipart/form-data">
-            <img class="mb-4" src="{{ url_for('static', filename='assets/brand/bootstrap-logo.svg') }}" alt="" width="72" height="57">
-            <h1 class="h3 mb-3 fw-normal">Upload Files</h1>
-            <h6>['Email', 'First Name', 'Last Name', 'Year']</h3>
-            <div class="input-group mb-3">
+            <img class="mb-4" src="{{ url_for('static', filename='assets/hopper.png') }}" alt="" width="72" height="108">
+            <h1 class="h1 mb-3 fw-normal">WiCS Attendance Script</h1>
+            <h3 class="h3 mb-3 fw-normal">Upload ZipFile</h3>
+            <h6 class="h6 fw-normal">Make sure columns have the following names:</h6>
+            <h6 class="h6 fw-normal"><b>['Email', 'First Name', 'Last Name', 'Year']</b></h6>
+            <div class="input-group mb-3 mt-4">
               <input type="file" name="zipfile" class="form-control">
             </div>
             <input type="submit" class="btn btn-primary" value="Upload">
@@ -59,14 +60,14 @@
 
           </div> 
         </div>
+        {% if inputFiles %}
         <div class="col-lg-7">
-          <h1 class="h3 mb-3 fw-normal">Select Files</h1>
-          <div class="container">
-            {% if inputFiles %}
+          <h1 class="h3 mb-1 fw-normal">Select Sheets</h1>
+          <input class="btn btn-primary m-3" type="button" onclick='selects()' value="Select All"/>  
+          <input class="btn btn-primary m-3" type="button" onclick='deSelect()' value="Deselect All"/>  
             <form method="POST" action="/checkedFiles" enctype="multipart/form-data">
-              <input class="btn btn-primary m-3" type="button" onclick='selects()' value="Select All"/>  
-              <input class="btn btn-primary m-3" type="button" onclick='deSelect()' value="Deselect All"/>  
-              <ul class="list-group">
+            <div class="container"> 
+              <ul class="list-group" id="filename-group">
                 {% for inputFile in inputFiles %}    
                 <li class="list-group-item rounded-0 text-start">  
                   <input class="form-check-input m-1" type="checkbox" name=checkedFiles value="{{ inputFile }}">
@@ -74,11 +75,11 @@
                 </li>                
                 {% endfor %}
               </ul>
-              <input type="submit" class="btn btn-primary mt-3" value="Submit">
+            </div> 
+            <input type="submit" class="btn btn-primary mt-3" value="Submit">
             </form>
-            {% endif %}
-          </div> 
         </div>
+        {% endif %}
       </div>
       </div>
     </main>
