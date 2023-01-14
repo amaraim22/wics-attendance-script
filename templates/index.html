@@ -31,13 +31,6 @@
             ele[i].checked=false;  
         }  
       }     
-      
-      $(document).ready(function () {
-            $("#download").click(function (e) {
-                e.preventDefault();                 
-                window.location.href = "output.xlsx";
-            });
-        });
     </script>  
   </head>
   <body class="text-center">  
@@ -54,13 +47,16 @@
             </div>
             <input type="submit" class="btn btn-primary" value="Upload">
           </form>
-          <div class="container">
+          <div class="container mt-3">
             {% if outputFile %}
-          
-              <input class="btn btn-primary m-3" id="download" type="submit" value="Download Output File"/>  
-              {{ outputFile }}  
-
+            <form id="my_form" action="/">            
+              <a onclick="document.getElementById('my_form').submit();" 
+              href="{{ url_for('static', filename='data/output-file/output.xlsx') }}" 
+              download="output.xlsx">
+                Download Output File</a> {{ outputFile }}  
+            </form>
             {% endif %}
+
           </div> 
         </div>
         <div class="col-lg-7">

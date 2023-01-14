@@ -6,17 +6,16 @@ from multiprocessing import Process
 import pandas as pd
 import io
 
-UPLOAD_FOLDER = "./data/input-files/"
-OUTPUT_FOLDER = "./data/output-file/"
+UPLOAD_FOLDER = "./static/data/input-files/"
+OUTPUT_FOLDER = "./static/data/output-file/"
+OUTPUT_FILE_PATH = os.path.join(OUTPUT_FOLDER, "output.xlsx")
 ALLOWED_EXTENSIONS = set(['zip'])
 
 app = Flask(__name__)
 
 @app.route('/')
 def index():
-    inputFiles = getInputFiles()
-    outputFile = getOutputFiles()
-    return render_template('index.html', inputFiles=inputFiles, outputFile=outputFile)
+    return render_template('index.html', inputFiles=getInputFiles(), outputFile=getOutputFiles())
 
 def allowed_file(filename):
     return '.' in filename and \
@@ -33,6 +32,9 @@ def getOutputFiles():
 @app.route('/uploadZipfile', methods=['GET', 'POST'])
 def upload_zipfile():
     if request.method == 'POST':
+        if os.path.isfile(OUTPUT_FILE_PATH):
+            os.remove(OUTPUT_FILE_PATH)
+
         if 'zipfile' not in request.files:
             flash('No file part')
             return redirect(request.url)
@@ -54,9 +56,8 @@ def upload_zipfile():
 
 def create_outputFile(checkFiles):
     fixedColumns = ['Email', 'First Name', 'Last Name', 'Year', 'Number of Events']
-    output_file_path = os.path.join(OUTPUT_FOLDER, "output.xlsx")
-    if os.path.isfile(output_file_path):
-        output_df = pd.read_excel(output_file_path)
+    if os.path.isfile(OUTPUT_FILE_PATH):
+        output_df = pd.read_excel(OUTPUT_FILE_PATH)
     else:
         output_df = pd.DataFrame(columns=fixedColumns)
 
@@ -102,12 +103,11 @@ def create_outputFile(checkFiles):
     output_df['Number of Events'] = output_df[eventColumns].sum(axis=1)
     output_df = output_df.sort_values(by=['Number of Events'], ascending=False)
 
-    output_df.to_excel(output_file_path, sheet_name="All Attendance", index=False) 
+    output_df.to_excel(OUTPUT_FILE_PATH, sheet_name="All Attendance", index=False) 
     return
 
 def filter_outputFile():
-    output_file_path = os.path.join(OUTPUT_FOLDER, "output.xlsx")
-    output_df = pd.read_excel(output_file_path)
+    output_df = pd.read_excel(OUTPUT_FILE_PATH)
 
     output_df.fillna(0, inplace=True) # fill empty cells with 0s
     output_df = output_df[output_df['Email'] != 0] # remove cells with 0 value as 'Email'
@@ -154,7 +154,7 @@ def filter_outputFile():
         output_df = pd.concat([output_df, pd.DataFrame([new_name_row])], ignore_index = True)
 
     output_df = output_df.sort_values(by=['Number of Events'], ascending=False)   
-    output_df.to_excel(output_file_path, sheet_name="All Attendance", index=False) 
+    output_df.to_excel(OUTPUT_FILE_PATH, sheet_name="All Attendance", index=False) 
     return
 
 @app.route('/checkedFiles', methods=['GET', 'POST'])
@@ -167,28 +167,6 @@ def submit_checkedFiles():
         filter_outputFile()
         outputFile = getOutputFiles()
     return render_template('index.html', inputFiles=inputFiles, outputFile=outputFile)
-
-@app.route('/downloadOutput', methods=['GET', 'POST'])
-def download_file():
-    if request.method == 'POST':
-        file_path = os.path.join(OUTPUT_FOLDER, "output.xlsx")
-
-        return_data = io.BytesIO()
-        with open(file_path, 'rb') as fo:
-            return_data.write(fo.read())
-            return_data.seek(0)    
-
-        background_remove(file_path)
-
-        return send_file(return_data, as_attachment=True, mimetype='application/vnd.ms-excel', download_name='output.xlsx')
-    return render_template('index.html', inputFiles=getInputFiles(), outputFile=getOutputFiles())
-
-def background_remove(path):
-    task = Process(target=rm(path))
-    task.start()
-
-def rm(path):
-    os.remove(path)
 
 if __name__ == '__main__':
    app.run(debug = True)
