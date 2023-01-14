@@ -5,6 +5,7 @@ from werkzeug.utils import secure_filename
 from multiprocessing import Process
 import pandas as pd
 
+# add /mysite/ when deployed
 UPLOAD_FOLDER = os.path.join(os.path.abspath(os.getcwd()), "static/data/input-files/")
 OUTPUT_FOLDER = os.path.join(os.path.abspath(os.getcwd()), "static/data/output-file/")
 OUTPUT_FILE_PATH = os.path.join(OUTPUT_FOLDER, "output.xlsx")
@@ -14,6 +15,8 @@ app = Flask(__name__)
 
 @app.route('/')
 def index():
+    if os.path.isfile(OUTPUT_FILE_PATH):
+        os.remove(OUTPUT_FILE_PATH)
     return render_template('index.html', inputFiles=getInputFiles(), outputFile=getOutputFiles())
 
 def allowed_file(filename):
@@ -42,7 +45,9 @@ def upload_zipfile():
         if file.filename == '':
             flash('No selected file')
             return redirect(request.url)
+
         if file and allowed_file(file.filename):
+
             filename = secure_filename(file.filename)
             file.save(os.path.join(UPLOAD_FOLDER, filename))
             zip_ref = zipfile.ZipFile(os.path.join(UPLOAD_FOLDER, filename), 'r')
