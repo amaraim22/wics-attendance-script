@@ -4,10 +4,9 @@ from flask import Flask, request, redirect, send_file, flash, render_template
 from werkzeug.utils import secure_filename
 from multiprocessing import Process
 import pandas as pd
-import io
 
-UPLOAD_FOLDER = "./static/data/input-files/"
-OUTPUT_FOLDER = "./static/data/output-file/"
+UPLOAD_FOLDER = os.path.join(os.path.abspath(os.getcwd()), "static/data/input-files/")
+OUTPUT_FOLDER = os.path.join(os.path.abspath(os.getcwd()), "static/data/output-file/")
 OUTPUT_FILE_PATH = os.path.join(OUTPUT_FOLDER, "output.xlsx")
 ALLOWED_EXTENSIONS = set(['zip'])
 
