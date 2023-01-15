@@ -46,9 +46,17 @@ def upload_zipfile():
             flash('No selected file')
             return redirect(request.url)
 
-        if file and allowed_file(file.filename):
+        if not allowed_file(file.filename):
+            flash("bad file")
+            return render_template('index.html', modal="bad file upload")
 
+        if file and allowed_file(file.filename):
             filename = secure_filename(file.filename)
+
+            if os.listdir(UPLOAD_FOLDER) != []:
+                for f in os.listdir(UPLOAD_FOLDER):
+                    os.remove(os.path.join(UPLOAD_FOLDER, f))
+
             file.save(os.path.join(UPLOAD_FOLDER, filename))
             zip_ref = zipfile.ZipFile(os.path.join(UPLOAD_FOLDER, filename), 'r')
             zip_ref.extractall(UPLOAD_FOLDER)
@@ -165,12 +173,14 @@ def filter_outputFile():
 def submit_checkedFiles():
     if request.method == 'POST':
         checkFiles = request.form.getlist('checkedFiles')
+        if len(checkFiles) <= 0:
+            return render_template('index.html', inputFiles=getInputFiles(), outputFile=getOutputFiles())
+
         inputFiles = getInputFiles()
         inputFiles = [f for f in inputFiles if f not in checkFiles]
         create_outputFile(checkFiles)
         filter_outputFile()
-        outputFile = getOutputFiles()
-    return render_template('index.html', inputFiles=inputFiles, outputFile=outputFile)
+    return render_template('index.html', inputFiles=inputFiles, outputFile=getOutputFiles())
 
 if __name__ == '__main__':
    app.run(debug = True)
